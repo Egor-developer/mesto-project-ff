@@ -1,3 +1,11 @@
+import "../pages/index.css";
+// import "../images/logo.svg";
+// import "../images/avatar.jpg";
+// import "../images/card_1.jpg";
+// import "../images/card_2.jpg";
+// import "../images/card_3.jpg";
+import { initialCards } from "./cards";
+
 const cardTemplate = document.querySelector("#card-template").content;
 const placesList = document.querySelector(".places__list");
 
