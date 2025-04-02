@@ -1,12 +1,17 @@
 import { cardTemplate } from "./index";
-import { openModalImage } from "./modal.js";
 
 export const deleteCard = (event) => {
   const cardItem = event.target.closest(".places__item");
   cardItem.remove();
 };
 
-export const createCard = (name, link, deleteCard, likeButtonFunction) => {
+export const createCard = (
+  name,
+  link,
+  deleteCard,
+  likeButtonFunction,
+  openModalImage
+) => {
   const cardElement = cardTemplate.cloneNode(true);
   const deleteButton = cardElement.querySelector(".card__delete-button");
   const likeButton = cardElement.querySelector(".card__like-button");
@@ -24,9 +29,5 @@ export const createCard = (name, link, deleteCard, likeButtonFunction) => {
 };
 
 export const likeButtonFunction = (event) => {
-  if (event.target.classList.contains("card__like-button_is-active")) {
-    event.target.classList.remove("card__like-button_is-active");
-  } else {
-    event.target.classList.add("card__like-button_is-active");
-  }
+  event.target.classList.toggle("card__like-button_is-active");
 };
