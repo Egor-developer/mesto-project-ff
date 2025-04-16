@@ -7,6 +7,8 @@ import { likeButtonFunction } from "./card";
 import { createEventListener } from "./modal";
 import { openModal } from "./modal";
 import { closeModal } from "./modal";
+import { enableValidation } from "./validation";
+import { clearValidation } from "./validation";
 
 export const cardTemplate = document.querySelector("#card-template").content;
 const placesList = document.querySelector(".places__list");
@@ -14,6 +16,8 @@ const profileEditButton = document.querySelector(".profile__edit-button");
 const cardAddButton = document.querySelector(".profile__add-button");
 
 profileEditButton.addEventListener("click", () => {
+  const formEditProfile = document.querySelector(".edit-profile");
+  clearValidation(formEditProfile);
   updateDataEditingProfile();
 
   return openModal(modalEditingProfile);
@@ -29,10 +33,12 @@ createEventListener(modalAddCard);
 createEventListener(modalImage);
 
 const formEditProfile = document.querySelector(".edit-profile");
-const nameInput = formEditProfile.querySelector(".popup__input_type_name");
+const nameInput = formEditProfile.querySelector("#popup__input_type_name");
 const jobInput = formEditProfile.querySelector(
-  ".popup__input_type_description"
+  "#popup__input_type_description"
 );
+
+enableValidation(formEditProfile);
 
 const profileName = document.querySelector(".profile__title");
 const profileJob = document.querySelector(".profile__description");
@@ -57,8 +63,8 @@ const handleFormEditingProfileSubmit = (evt) => {
 formEditProfile.addEventListener("submit", handleFormEditingProfileSubmit);
 
 const formAddCard = document.querySelector(".new-place");
-const cardNameInput = formAddCard.querySelector(".popup__input_type_card-name");
-const linkInput = formAddCard.querySelector(".popup__input_type_url");
+const cardNameInput = formAddCard.querySelector("#popup__input_type_card-name");
+const linkInput = formAddCard.querySelector("#popup__input_type_url");
 
 const handleFormAddCardSubmit = (evt) => {
   evt.preventDefault();
@@ -75,6 +81,7 @@ const handleFormAddCardSubmit = (evt) => {
 
   cardNameInput.value = "";
   linkInput.value = "";
+  clearValidation(formAddCard);
 
   closeModal(modalAddCard);
 };
