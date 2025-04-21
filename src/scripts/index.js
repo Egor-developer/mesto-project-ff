@@ -1,88 +1,118 @@
 import "../pages/index.css";
 
-import { initialCards } from "./cards";
 import { createCard } from "./card";
 import { deleteCard } from "./card";
 import { likeButtonFunction } from "./card";
+import { deletelikeButtonFunction } from "./card";
 import { createEventListener } from "./modal";
 import { openModal } from "./modal";
 import { closeModal } from "./modal";
 import { enableValidation } from "./validation";
 import { clearValidation } from "./validation";
+import { getUserInfo } from "./api";
+import { getCards } from "./api";
+import { patchUserInfo } from "./api";
+import { postCard } from "./api";
+import { editAvatar } from "./api";
+import { renderLoading } from "./api";
 
 export const cardTemplate = document.querySelector("#card-template").content;
 const placesList = document.querySelector(".places__list");
 const profileEditButton = document.querySelector(".profile__edit-button");
 const cardAddButton = document.querySelector(".profile__add-button");
+const profileAvatar = document.querySelector(".profile__image");
 
 profileEditButton.addEventListener("click", () => {
   const formEditProfile = document.querySelector(".edit-profile");
   clearValidation(formEditProfile);
-  updateDataEditingProfile();
+  nameInput.value = profileName.textContent;
+  aboutInput.value = profileAbout.textContent;
 
   return openModal(modalEditingProfile);
 });
 cardAddButton.addEventListener("click", () => openModal(modalAddCard));
+profileAvatar.addEventListener("click", () => openModal(modalAvatar));
 
 const modalEditingProfile = document.querySelector(".popup_type_edit");
 const modalAddCard = document.querySelector(".popup_type_new-card");
 const modalImage = document.querySelector(".popup_type_image");
+const modalAvatar = document.querySelector(".popup_type_avatar");
 
 createEventListener(modalEditingProfile);
 createEventListener(modalAddCard);
 createEventListener(modalImage);
+createEventListener(modalAvatar);
 
 const formEditProfile = document.querySelector(".edit-profile");
 const nameInput = formEditProfile.querySelector("#popup__input_type_name");
-const jobInput = formEditProfile.querySelector(
+const aboutInput = formEditProfile.querySelector(
   "#popup__input_type_description"
 );
 
-enableValidation(formEditProfile);
-
 const profileName = document.querySelector(".profile__title");
-const profileJob = document.querySelector(".profile__description");
-
-const updateDataEditingProfile = () => {
-  nameInput.value = profileName.textContent;
-  jobInput.value = profileJob.textContent;
-};
+const profileAbout = document.querySelector(".profile__description");
 
 const handleFormEditingProfileSubmit = (evt) => {
   evt.preventDefault();
 
-  const name = nameInput.value;
-  const job = jobInput.value;
+  renderLoading(true, evt.target);
 
-  profileName.textContent = name;
-  profileJob.textContent = job;
+  patchUserInfo(nameInput.value, aboutInput.value)
+    .then((res) => {
+      profileName.textContent = res.name;
+      profileAbout.textContent = res.about;
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      renderLoading(false, evt.target);
+    });
 
   closeModal(modalEditingProfile);
 };
 
 formEditProfile.addEventListener("submit", handleFormEditingProfileSubmit);
 
+enableValidation(formEditProfile);
+
 const formAddCard = document.querySelector(".new-place");
 const cardNameInput = formAddCard.querySelector("#popup__input_type_card-name");
-const linkInput = formAddCard.querySelector("#popup__input_type_url");
+const cardLinkInput = formAddCard.querySelector("#popup__input_type_url");
 
 const handleFormAddCardSubmit = (evt) => {
   evt.preventDefault();
 
-  placesList.prepend(
-    createCard(
-      cardNameInput.value,
-      linkInput.value,
-      deleteCard,
-      likeButtonFunction,
-      openModalImage
-    )
-  );
+  renderLoading(true, evt.target);
+
+  postCard(cardNameInput.value, cardLinkInput.value)
+    .then((res) => {
+      placesList.prepend(
+        createCard(
+          res.name,
+          res.link,
+          res._id,
+          res.owner._id,
+          deleteCard,
+          likeButtonFunction,
+          deletelikeButtonFunction,
+          res.likes.length,
+          isLike,
+          openModalImage
+        )
+      );
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      renderLoading(false, evt.target);
+    });
 
   cardNameInput.value = "";
-  linkInput.value = "";
-  clearValidation(formAddCard);
+  cardLinkInput.value = "";
 
+  clearValidation(formAddCard);
   closeModal(modalAddCard);
 };
 
@@ -99,14 +129,71 @@ const openModalImage = (name, link) => {
   openModal(modalImage);
 };
 
-initialCards.forEach((elem) => {
-  placesList.append(
-    createCard(
-      elem.name,
-      elem.link,
-      deleteCard,
-      likeButtonFunction,
-      openModalImage
-    )
-  );
-});
+const formAvatar = document.querySelector(".edit-avatar");
+const avatarLinkInput = formAvatar.querySelector("#popup__input_type_url");
+
+const handleFormAvatarSubmit = (evt) => {
+  evt.preventDefault();
+
+  renderLoading(true, evt.target);
+
+  editAvatar(avatarLinkInput.value)
+    .then((res) => {
+      profileAvatar.style = `background-image: url(${res.avatar})`;
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      renderLoading(false, evt.target);
+    });
+
+  clearValidation(formAvatar);
+  closeModal(modalAvatar);
+};
+
+formAvatar.addEventListener("submit", handleFormAvatarSubmit);
+
+export let userId = null;
+let isLike = null;
+
+getUserInfo()
+  .then((res) => {
+    profileAvatar.style = `background-image: url(${res.avatar})`;
+    profileName.textContent = res.name;
+    profileAbout.textContent = res.about;
+    userId = res._id;
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+getCards()
+  .then((res) => {
+    res.forEach((elem) => {
+      elem.likes.forEach((elem) => {
+        if (elem._id === userId) {
+          isLike = true;
+        } else {
+          isLike = false;
+        }
+      });
+      placesList.append(
+        createCard(
+          elem.name,
+          elem.link,
+          elem._id,
+          elem.owner._id,
+          deleteCard,
+          likeButtonFunction,
+          deletelikeButtonFunction,
+          elem.likes.length,
+          isLike,
+          openModalImage
+        )
+      );
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
