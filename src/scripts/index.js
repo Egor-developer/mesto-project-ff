@@ -1,20 +1,15 @@
 import "../pages/index.css";
 
-import { createCard } from "./card";
-import { deleteCard } from "./card";
-import { likeButtonFunction } from "./card";
-import { deletelikeButtonFunction } from "./card";
-import { createEventListener } from "./modal";
-import { openModal } from "./modal";
-import { closeModal } from "./modal";
-import { enableValidation } from "./validation";
-import { clearValidation } from "./validation";
-import { getUserInfo } from "./api";
-import { getCards } from "./api";
-import { patchUserInfo } from "./api";
-import { postCard } from "./api";
-import { editAvatar } from "./api";
-import { renderLoading } from "./api";
+import { createCard, deleteCard, likeButtonFunction } from "./card";
+import { createEventListener, openModal, closeModal } from "./modal";
+import { enableValidation, clearValidation } from "./validation";
+import {
+  getUserInfo,
+  getCards,
+  patchUserInfo,
+  postCard,
+  editAvatar,
+} from "./api";
 
 export const cardTemplate = document.querySelector("#card-template").content;
 const placesList = document.querySelector(".places__list");
@@ -52,6 +47,12 @@ const aboutInput = formEditProfile.querySelector(
 const profileName = document.querySelector(".profile__title");
 const profileAbout = document.querySelector(".profile__description");
 
+const renderLoading = (isLoading, elem) => {
+  const buttonElement = elem.querySelector(".button");
+
+  buttonElement.textContent = isLoading ? "Сохранить..." : "Сохранить";
+};
+
 const handleFormEditingProfileSubmit = (evt) => {
   evt.preventDefault();
 
@@ -74,7 +75,11 @@ const handleFormEditingProfileSubmit = (evt) => {
 
 formEditProfile.addEventListener("submit", handleFormEditingProfileSubmit);
 
-enableValidation(formEditProfile);
+enableValidation({
+  formSelector: ".popup__form",
+  formInputs: ".popup__input",
+  formButton: ".popup__button",
+});
 
 const formAddCard = document.querySelector(".new-place");
 const cardNameInput = formAddCard.querySelector("#popup__input_type_card-name");
@@ -88,18 +93,7 @@ const handleFormAddCardSubmit = (evt) => {
   postCard(cardNameInput.value, cardLinkInput.value)
     .then((res) => {
       placesList.prepend(
-        createCard(
-          res.name,
-          res.link,
-          res._id,
-          res.owner._id,
-          deleteCard,
-          likeButtonFunction,
-          deletelikeButtonFunction,
-          res.likes.length,
-          isLike,
-          openModalImage
-        )
+        createCard(res, deleteCard, likeButtonFunction, openModalImage)
       );
     })
     .catch((err) => {
@@ -155,7 +149,6 @@ const handleFormAvatarSubmit = (evt) => {
 formAvatar.addEventListener("submit", handleFormAvatarSubmit);
 
 export let userId = null;
-let isLike = null;
 
 getUserInfo()
   .then((res) => {
@@ -171,26 +164,8 @@ getUserInfo()
 getCards()
   .then((res) => {
     res.forEach((elem) => {
-      elem.likes.forEach((elem) => {
-        if (elem._id === userId) {
-          isLike = true;
-        } else {
-          isLike = false;
-        }
-      });
       placesList.append(
-        createCard(
-          elem.name,
-          elem.link,
-          elem._id,
-          elem.owner._id,
-          deleteCard,
-          likeButtonFunction,
-          deletelikeButtonFunction,
-          elem.likes.length,
-          isLike,
-          openModalImage
-        )
+        createCard(elem, deleteCard, likeButtonFunction, openModalImage)
       );
     });
   })

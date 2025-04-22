@@ -6,15 +6,19 @@ const config = {
   },
 };
 
+const handleResponse = (res) => {
+  if (res.ok) {
+    return res.json();
+  }
+
+  return Promise.reject(`Ошибка: ${res.status}`);
+};
+
 export const getUserInfo = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers,
   }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return handleResponse(res);
   });
 };
 
@@ -22,11 +26,7 @@ export const getCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers,
   }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return handleResponse(res);
   });
 };
 
@@ -39,11 +39,7 @@ export const patchUserInfo = (name, about) => {
       about: about,
     }),
   }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return handleResponse(res);
   });
 };
 
@@ -56,11 +52,7 @@ export const postCard = (name, link) => {
       link: link,
     }),
   }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return handleResponse(res);
   });
 };
 
@@ -69,11 +61,7 @@ export const deleteCardFromServer = (id) => {
     method: "DELETE",
     headers: config.headers,
   }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return handleResponse(res);
   });
 };
 
@@ -82,11 +70,7 @@ export const putLike = (id) => {
     method: "PUT",
     headers: config.headers,
   }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return handleResponse(res);
   });
 };
 
@@ -95,11 +79,7 @@ export const deleteLike = (id) => {
     method: "DELETE",
     headers: config.headers,
   }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return handleResponse(res);
   });
 };
 
@@ -111,19 +91,6 @@ export const editAvatar = (link) => {
       avatar: link,
     }),
   }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return handleResponse(res);
   });
-};
-
-export const renderLoading = (isLoading, elem) => {
-  const buttonElement = elem.querySelector(".button");
-  if (isLoading) {
-    buttonElement.textContent = "Сохранить...";
-  } else {
-    buttonElement.textContent = "Сохранить";
-  }
 };
