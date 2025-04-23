@@ -16,6 +16,7 @@ const placesList = document.querySelector(".places__list");
 const profileEditButton = document.querySelector(".profile__edit-button");
 const cardAddButton = document.querySelector(".profile__add-button");
 const profileAvatar = document.querySelector(".profile__image");
+
 const config = {
   formSelector: ".popup__form",
   formInput: ".popup__input",
