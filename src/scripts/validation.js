@@ -50,7 +50,7 @@ const checkInputValidity = (formElement, inputElement, config) => {
 };
 
 const setEventListeners = (formElement, config) => {
-  const inputList = Array.from(formElement.querySelectorAll(config.formInputs));
+  const inputList = Array.from(formElement.querySelectorAll(config.formInput));
   const buttonElement = formElement.querySelector(config.formButton);
 
   inputList.forEach((inputElement) => {
@@ -69,14 +69,12 @@ export const enableValidation = (config) => {
   });
 };
 
-export const clearValidation = (formElement, validationConfig) => {
-  const inputList = Array.from(
-    formElement.querySelectorAll(validationConfig.popupInput)
-  );
-  const buttonElement = formElement.querySelector(validationConfig.popupButton);
-  disableSubmitButton(buttonElement, validationConfig);
+export const clearValidation = (formElement, config) => {
+  const inputList = Array.from(formElement.querySelectorAll(config.formInput));
+  const buttonElement = formElement.querySelector(config.formButton);
+  disableSubmitButton(buttonElement, config);
 
   inputList.forEach((inputElement) => {
-    hideInputError(formElement, inputElement, validationConfig);
+    hideInputError(formElement, inputElement, config);
   });
 };

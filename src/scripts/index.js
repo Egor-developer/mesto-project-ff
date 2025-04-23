@@ -16,13 +16,17 @@ const placesList = document.querySelector(".places__list");
 const profileEditButton = document.querySelector(".profile__edit-button");
 const cardAddButton = document.querySelector(".profile__add-button");
 const profileAvatar = document.querySelector(".profile__image");
+const config = {
+  formSelector: ".popup__form",
+  formInput: ".popup__input",
+  formButton: ".popup__button",
+  buttonInactive: "popup__button_inactive",
+  inputError: "popup__input-error",
+};
 
 profileEditButton.addEventListener("click", () => {
   const formEditProfile = document.querySelector(".edit-profile");
-  clearValidation(formEditProfile, {
-    popupInput: ".popup__input",
-    popupButton: ".popup__button",
-  });
+  clearValidation(formEditProfile, config);
   nameInput.value = profileName.textContent;
   aboutInput.value = profileAbout.textContent;
 
@@ -78,13 +82,7 @@ const handleFormEditingProfileSubmit = (evt) => {
 
 formEditProfile.addEventListener("submit", handleFormEditingProfileSubmit);
 
-enableValidation({
-  formSelector: ".popup__form",
-  formInputs: ".popup__input",
-  formButton: ".popup__button",
-  buttonInactive: ".popup__button_inactive",
-  inputError: ".popup__input-error",
-});
+enableValidation(config);
 
 const formAddCard = document.querySelector(".new-place");
 const cardNameInput = formAddCard.querySelector("#popup__input_type_card-name");
@@ -111,10 +109,7 @@ const handleFormAddCardSubmit = (evt) => {
   cardNameInput.value = "";
   cardLinkInput.value = "";
 
-  clearValidation(formAddCard, {
-    popupInput: ".popup__input",
-    popupButton: ".popup__button",
-  });
+  clearValidation(formAddCard, config);
   closeModal(modalAddCard);
 };
 
@@ -150,10 +145,8 @@ const handleFormAvatarSubmit = (evt) => {
       renderLoading(false, evt.target);
     });
 
-  clearValidation(formAvatar, {
-    popupInput: ".popup__input",
-    popupButton: ".popup__button",
-  });
+  clearValidation(formAvatar, config);
+  console.log(formAvatar, config);
   closeModal(modalAvatar);
 };
 
