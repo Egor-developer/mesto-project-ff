@@ -19,7 +19,10 @@ const profileAvatar = document.querySelector(".profile__image");
 
 profileEditButton.addEventListener("click", () => {
   const formEditProfile = document.querySelector(".edit-profile");
-  clearValidation(formEditProfile);
+  clearValidation(formEditProfile, {
+    popupInput: ".popup__input",
+    popupButton: ".popup__button",
+  });
   nameInput.value = profileName.textContent;
   aboutInput.value = profileAbout.textContent;
 
@@ -79,6 +82,8 @@ enableValidation({
   formSelector: ".popup__form",
   formInputs: ".popup__input",
   formButton: ".popup__button",
+  buttonInactive: ".popup__button_inactive",
+  inputError: ".popup__input-error",
 });
 
 const formAddCard = document.querySelector(".new-place");
@@ -106,7 +111,10 @@ const handleFormAddCardSubmit = (evt) => {
   cardNameInput.value = "";
   cardLinkInput.value = "";
 
-  clearValidation(formAddCard);
+  clearValidation(formAddCard, {
+    popupInput: ".popup__input",
+    popupButton: ".popup__button",
+  });
   closeModal(modalAddCard);
 };
 
@@ -142,7 +150,10 @@ const handleFormAvatarSubmit = (evt) => {
       renderLoading(false, evt.target);
     });
 
-  clearValidation(formAvatar);
+  clearValidation(formAvatar, {
+    popupInput: ".popup__input",
+    popupButton: ".popup__button",
+  });
   closeModal(modalAvatar);
 };
 
