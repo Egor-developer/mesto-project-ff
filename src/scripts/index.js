@@ -176,3 +176,5 @@ getCards()
   .catch((err) => {
     console.log(err);
   });
+
+console.log("Egor Coding Add for me in trening!!!");
